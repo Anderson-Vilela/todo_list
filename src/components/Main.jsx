@@ -3,16 +3,24 @@ import { Notepad, PlusCircle, Trash } from 'phosphor-react';
 import { v4 as uuidv4 } from 'uuid';
 
 const Main = () => {
-  const [inboxTask, setInboxTask] = React.useState(null);
+  const [inboxTask, setInboxTask] = React.useState('');
   const [tasks, setTasks] = React.useState([]);
 
-  const addTask = () => setTasks([...tasks, { id: uuidv4(), title: inboxTask, isCompleted: false }]);
-  const deleteTask = (id) => setTasks(tasks.filter((todo) => todo.id !== id));
+  const addTask = () => {
+    if (inboxTask !== '') {
+      setTasks([...tasks, { id: uuidv4(), title: inboxTask, isCompleted: false }]);
+      setInboxTask('');
+    }
+  };
+  const deleteTask = (_id) => {
+    const updatedTasks = [...tasks].filter((_task) => _task.id !== _id);
+    setTasks(updatedTasks);
+  };
 
   return (
     <main className='h-[100rem] bg-gray-600'>
       <section className='mx-auto flex translate-y-[-50%] justify-between bg-transparent phone-up:w-[76.8rem]'>
-        <input id='inputInbox' onChange={({ target }) => setInboxTask(target.value)} placeholder='Adicione uma nova tarefa' type='text' className='h-[5.4rem] w-[63.8rem] rounded-xl border-black bg-gray-500 p-6 placeholder:text-gray-300' />
+        <input value={inboxTask} onChange={({ target }) => setInboxTask(target.value)} placeholder='Adicione uma nova tarefa' type='text' className='h-[5.4rem] w-[63.8rem] rounded-xl border-black bg-gray-500 p-6 text-gray-300 placeholder:text-gray-300 focus-visible:outline-none' />
         <button onClick={addTask} type='button' className='flex items-center justify-center gap-3 rounded-xl bg-blue-dark p-6 font-bold text-gray-100'>
           Criar
           <PlusCircle size={16} color='#F2F2F2' weight='bold' />
@@ -45,7 +53,7 @@ const Main = () => {
                     </div>
                     <div className='flex-1'>{task.title}</div>
                     <div>
-                      <button type='button' onClick={deleteTask} className='p-4'>
+                      <button type='button' onClick={() => deleteTask(task.id)} className='p-4'>
                         <Trash size={16} color='#c0c0c0' />
                       </button>
                     </div>
