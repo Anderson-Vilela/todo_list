@@ -6,7 +6,8 @@ const Main = () => {
   const [inboxTask, setInboxTask] = React.useState('');
   const [tasks, setTasks] = React.useState([]);
 
-  const addTask = () => {
+  const addTask = (event) => {
+    event.preventDefault();
     if (inboxTask !== '') {
       setTasks([...tasks, { id: uuidv4(), title: inboxTask, isCompleted: false }]);
       setInboxTask('');
@@ -32,13 +33,13 @@ const Main = () => {
 
   return (
     <main className='h-[100rem] bg-gray-600'>
-      <section className='mx-auto flex translate-y-[-50%] justify-between bg-transparent phone-up:w-[76.8rem]'>
+      <form action='' method='post' className='mx-auto flex translate-y-[-50%] justify-between bg-transparent phone-up:w-[76.8rem]'>
         <input value={inboxTask} onChange={({ target }) => setInboxTask(target.value)} placeholder='Adicione uma nova tarefa' type='text' className='h-[5.4rem] w-[63.8rem] rounded-xl border-black bg-gray-500 p-6 text-gray-300 placeholder:text-gray-300 focus-visible:outline-none' />
-        <button onClick={addTask} type='button' className='flex items-center justify-center gap-3 rounded-xl bg-blue-dark p-6 font-bold text-gray-100'>
+        <button onClick={addTask} type='submit' className='flex items-center justify-center gap-3 rounded-xl bg-blue-dark p-6 font-bold text-gray-100'>
           Criar
           <PlusCircle size={16} color='#F2F2F2' weight='bold' />
         </button>
-      </section>
+      </form>
       <section className='mx-auto mt-16 phone-up:w-[76.8rem]'>
         <div className='flex justify-between'>
           <div>
