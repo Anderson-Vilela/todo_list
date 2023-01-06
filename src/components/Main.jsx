@@ -1,5 +1,5 @@
 import React from 'react';
-import { Notepad, PlusCircle, Trash } from 'phosphor-react';
+import { Check, Notepad, PlusCircle, Trash } from 'phosphor-react';
 import { v4 as uuidv4 } from 'uuid';
 
 const Main = () => {
@@ -14,6 +14,19 @@ const Main = () => {
   };
   const deleteTask = (_id) => {
     const updatedTasks = [...tasks].filter((_task) => _task.id !== _id);
+    setTasks(updatedTasks);
+  };
+
+  const toggleTaskIscompleted = (_taskId) => {
+    const updatedTasks = [...tasks].map((_task) => {
+      if (_task.id === _taskId) {
+        return {
+          ..._task,
+          isCompleted: !_task.isCompleted,
+        };
+      }
+      return _task;
+    });
     setTasks(updatedTasks);
   };
 
@@ -47,11 +60,15 @@ const Main = () => {
             <div>
               <ul className='grid gap-5'>
                 {tasks.map((task) => (
-                  <li className='flex items-center justify-between gap-8 rounded-xl bg-gray-400 p-7' key={task.id}>
-                    <div className='p-4'>
-                      <input type='radio' name='' id='' />
+                  <li key={task.id} className='flex items-center justify-between gap-8 rounded-xl bg-gray-400 p-7'>
+                    <div className='flex items-center justify-center p-4' key={task.id}>
+                      <button type='button' onClick={() => toggleTaskIscompleted(task.id)} className={task.isCompleted ? 'flex h-7 w-7 items-center justify-center rounded-full border-2 border-purple-dark bg-purple-dark' : 'flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-dark bg-transparent'}>
+                        <div>
+                          <Check size={12} weight='bold' color={task.isCompleted ? '#fcfcfc' : ''} />
+                        </div>
+                      </button>
                     </div>
-                    <div className='flex-1'>{task.title}</div>
+                    <div className={task.isCompleted ? 'font text- flex-1 break-all text-gray-300 line-through' : 'font flex-1 break-all text-gray-100'}>{task.title}</div>
                     <div>
                       <button type='button' onClick={() => deleteTask(task.id)} className='p-4'>
                         <Trash size={16} color='#c0c0c0' />
