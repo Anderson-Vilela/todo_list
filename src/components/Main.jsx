@@ -6,28 +6,37 @@ import tasksControllers from '../../api/controllers/tasksControllers';
 const Main = () => {
   const [inboxTask, setInboxTask] = React.useState('');
   const [apiTasks, setApiTasks] = React.useState([]);
+  const [updatedTasks, setUpdatedTasks] = React.useState([]);
+  const [page, setPage] = React.useState(1);
 
   useEffect(() => {
-    tasksControllers.getAllTasks().then((result) => {
+    tasksControllers.getAllTasks(page).then((result) => {
       setApiTasks(result);
-      console.log('executou');
     });
-  }, []);
+  }, [updatedTasks, page]);
 
   const handleChange = ({ target }) => setInboxTask(target.value);
 
-  const handleAddNewTask = (e) => {
-    e.preventDefault();
-    const newTask = { id: uuidv4(), title: inboxTask, isCompleted: false };
-    tasksControllers.createNewTask(newTask).then((result) => {
-      setApiTasks(result);
-      setInboxTask('');
-    });
+  const handleAddNewTask = (event) => {
+    event.preventDefault();
+    if (inboxTask !== '') {
+      const newTask = { id: uuidv4(), title: inboxTask, isCompleted: false };
+      tasksControllers.createNewTask(newTask).then((result) => {
+        setUpdatedTasks(result);
+        setInboxTask('');
+      });
+    }
   };
 
   const handleDeleteTaskById = (id) => {
     tasksControllers.deleteTaskById(id).then((result) => {
-      setApiTasks(result);
+      setUpdatedTasks(result);
+    });
+  };
+
+  const handleToggleIsCompleted = (task) => {
+    tasksControllers.toggleIsCompletedById(task).then((result) => {
+      setUpdatedTasks(result);
     });
   };
 
@@ -63,7 +72,7 @@ const Main = () => {
                 {apiTasks.map((task) => (
                   <li key={task.id} className='flex items-center justify-between gap-8 rounded-xl bg-gray-400 p-7'>
                     <div className='flex items-center justify-center p-4' key={task.id}>
-                      <button type='button' onClick={() => toggleTaskIscompleted(task.id)} className={task.isCompleted ? 'flex h-7 w-7 items-center justify-center rounded-full border-2 border-purple-dark bg-purple-dark' : 'flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-dark bg-transparent'}>
+                      <button type='button' onClick={() => handleToggleIsCompleted(task)} className={task.isCompleted ? 'flex h-7 w-7 items-center justify-center rounded-full border-2 border-purple-dark bg-purple-dark' : 'flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-dark bg-transparent'}>
                         <div>
                           <Check size={12} weight='bold' color={task.isCompleted ? '#fcfcfc' : ''} />
                         </div>
@@ -71,7 +80,7 @@ const Main = () => {
                     </div>
                     <div className={task.isCompleted ? 'font text- flex-1 break-all text-gray-300 line-through' : 'font flex-1 break-all text-gray-100'}>{task.title}</div>
                     <div>
-                      <button type='button' className='p-4'>
+                      <button type='button' onClick={() => handleDeleteTaskById(task.id)} className='p-4'>
                         <Trash size={16} color='#c0c0c0' />
                       </button>
                     </div>
