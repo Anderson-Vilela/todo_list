@@ -8,10 +8,12 @@ const Main = () => {
   const [apiTasks, setApiTasks] = React.useState([]);
   const [updatedTasks, setUpdatedTasks] = React.useState([]);
   const [page, setPage] = React.useState(1);
+  const [numberPages, setNumberPages] = React.useState(1);
 
   useEffect(() => {
-    tasksControllers.getAllTasks(page).then((result) => {
-      setApiTasks(result);
+    tasksControllers.getAllTasks(page).then(({ data, headers }) => {
+      setApiTasks(data);
+      setNumberPages(headers.link.match(/(?<=page=)./g)[2]);
     });
   }, [updatedTasks, page]);
 

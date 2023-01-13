@@ -5,8 +5,8 @@ const messageError = 'Erro inexperado.';
 const tasksControllers = {
   async getAllTasks(page = 1) {
     try {
-      const { data } = await api().get(`/tasks?_page=${page}`);
-      return data;
+      const response = await api().get(`/tasks?_page=${page}`);
+      return response;
     } catch (error) {
       return messageError;
     }
