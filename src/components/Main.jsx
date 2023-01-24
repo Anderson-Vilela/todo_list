@@ -137,7 +137,7 @@ const Main = () => {
                     setPage(value + 1);
                   }}
                   key={uuidv4()}
-                  className='rounded-xl bg-red-800 py-4 px-8 font-bold text-white'>
+                  className='rounded-xl bg-[#3638A6] py-4 px-8 font-bold text-white'>
                   {value + 1}
                 </button>
               );
@@ -150,7 +150,7 @@ const Main = () => {
                     setPage(value + 1);
                   }}
                   key={uuidv4()}
-                  className='rounded-xl bg-purple-dark py-4 px-8 font-bold text-white'>
+                  className='rounded-xl bg-purple py-4 px-8 font-bold text-white hover:bg-purple-dark'>
                   {value + 1}
                 </button>
               );
