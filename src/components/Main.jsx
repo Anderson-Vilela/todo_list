@@ -40,6 +40,9 @@ const Main = () => {
   const handleDeleteTaskById = (id) => {
     tasksControllers.deleteTaskById(id).then((result) => {
       setUpdatedTasks(result);
+      if (apiTasks.length === 1) {
+        setPage(page - 1);
+      }
     });
   };
 
@@ -54,7 +57,7 @@ const Main = () => {
       <form action='' method='post' className='mx-auto flex translate-y-[-50%] justify-between bg-transparent phone-up:w-[76.8rem]'>
         <input value={inboxTask} onChange={handleChange} placeholder='Adicione uma nova tarefa' type='text' className='h-[5.4rem] w-[63.8rem] rounded-xl border-black bg-gray-500 p-6 text-gray-300 placeholder:text-gray-300 focus-visible:outline-none' />
         <button type='submit' onClick={handleAddNewTask} className='flex items-center justify-center gap-3 rounded-xl bg-blue-dark p-6 font-bold text-gray-100'>
-          Criar {finalPage}
+          Criar
           <PlusCircle size={16} color='#F2F2F2' weight='bold' />
         </button>
       </form>
@@ -70,7 +73,14 @@ const Main = () => {
         <div className='mt-8'>
           <label htmlFor='limit' className='flex items-center gap-6 text-purple-dark'>
             Limite de tarefas por página
-            <select className='rounded-lg font-bold' name='limit' id='limit' onChange={({ target }) => setLimitPerPages(target.value)}>
+            <select
+              className='rounded-lg font-bold'
+              name='limit'
+              id='limit'
+              onChange={({ target }) => {
+                setLimitPerPages(target.value);
+                setPage(1);
+              }}>
               <option value='10' defaultValue={10}>
                 10
               </option>
@@ -128,20 +138,7 @@ const Main = () => {
                 </button>
               );
             }
-            if (value - 3 <= page) {
-              return (
-                <button
-                  type='button'
-                  onClick={() => {
-                    setPage(value + 1);
-                  }}
-                  key={uuidv4()}
-                  className='rounded-xl bg-purple-dark py-4 px-8 font-bold text-white'>
-                  {value + 1}
-                </button>
-              );
-            }
-            if (value + 4 >= page) {
+            if (value - 2 <= page && value + 4 >= page) {
               return (
                 <button
                   type='button'
