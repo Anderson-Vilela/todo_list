@@ -16,6 +16,10 @@ const Main = () => {
     tasksControllers.getAllTasks(page, limitPerPages).then(({ data, headers }) => {
       setApiTasks(data);
       setFinalPage(headers.link.match(/(?<=page=).*?(?=&)/g).slice(-1));
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
     });
   }, [updatedTasks, page, limitPerPages]);
 
