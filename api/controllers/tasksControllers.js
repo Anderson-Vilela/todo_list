@@ -3,9 +3,9 @@ import api from '../services/axios/axiosConfig';
 const messageError = 'Erro inexperado.';
 
 const tasksControllers = {
-  async getAllTasks(page = 1) {
+  async getAllTasks(page = 1, limit = 10) {
     try {
-      const response = await api().get(`/tasks?_page=${page}`);
+      const response = await api().get(`/tasks?_page=${page}&_limit=${limit}`);
       return response;
     } catch (error) {
       return messageError;

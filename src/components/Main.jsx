@@ -8,14 +8,21 @@ const Main = () => {
   const [apiTasks, setApiTasks] = React.useState([]);
   const [updatedTasks, setUpdatedTasks] = React.useState([]);
   const [page, setPage] = React.useState(1);
-  const [numberPages, setNumberPages] = React.useState(1);
+  const [limitPerPages, setLimitPerPages] = React.useState(10);
+  const [finalPage, setFinalPage] = React.useState(1);
+  const [numberPages, setNumberPages] = React.useState([]);
 
   useEffect(() => {
-    tasksControllers.getAllTasks(page).then(({ data, headers }) => {
+    tasksControllers.getAllTasks(page, limitPerPages).then(({ data, headers }) => {
       setApiTasks(data);
-      setNumberPages(headers.link.match(/(?<=page=)./g)[2]);
+      setFinalPage(headers.link.match(/(?<=page=).*?(?=&)/g).slice(-1));
     });
-  }, [updatedTasks, page]);
+  }, [updatedTasks, page, limitPerPages]);
+
+  useEffect(() => {
+    const number = parseInt(finalPage, 10);
+    setNumberPages([...Array(number).keys()]);
+  }, [finalPage]);
 
   const handleChange = ({ target }) => setInboxTask(target.value);
 
@@ -43,11 +50,11 @@ const Main = () => {
   };
 
   return (
-    <main className='h-[100rem] bg-gray-600'>
+    <main className='min-h-screen bg-gray-600'>
       <form action='' method='post' className='mx-auto flex translate-y-[-50%] justify-between bg-transparent phone-up:w-[76.8rem]'>
         <input value={inboxTask} onChange={handleChange} placeholder='Adicione uma nova tarefa' type='text' className='h-[5.4rem] w-[63.8rem] rounded-xl border-black bg-gray-500 p-6 text-gray-300 placeholder:text-gray-300 focus-visible:outline-none' />
         <button type='submit' onClick={handleAddNewTask} className='flex items-center justify-center gap-3 rounded-xl bg-blue-dark p-6 font-bold text-gray-100'>
-          Criar
+          Criar {finalPage}
           <PlusCircle size={16} color='#F2F2F2' weight='bold' />
         </button>
       </form>
@@ -59,6 +66,18 @@ const Main = () => {
           <div>
             <p className='text-purple'>concluidas</p>
           </div>
+        </div>
+        <div className='mt-8'>
+          <label htmlFor='limit' className='flex items-center gap-6 text-purple-dark'>
+            Limite de tarefas por página
+            <select className='rounded-lg font-bold' name='limit' id='limit' onChange={({ target }) => setLimitPerPages(target.value)}>
+              <option value='10' defaultValue={10}>
+                10
+              </option>
+              <option value='5'>5</option>
+              <option value='3'>3</option>
+            </select>
+          </label>
         </div>
         <div className={apiTasks.length === 0 ? 'mt-8 rounded-lg border-t border-gray-300' : 'mt-8'}>
           {apiTasks.length === 0 ? (
@@ -91,6 +110,52 @@ const Main = () => {
               </ul>
             </div>
           )}
+        </div>
+      </section>
+      <section className='mx-auto pt-8 pb-32 phone-up:w-[76.8rem] '>
+        <div className='flex items-center justify-center gap-3'>
+          {numberPages.map((value) => {
+            if (value + 1 === page) {
+              return (
+                <button
+                  type='button'
+                  onClick={() => {
+                    setPage(value + 1);
+                  }}
+                  key={uuidv4()}
+                  className='rounded-xl bg-red-800 py-4 px-8 font-bold text-white'>
+                  {value + 1}
+                </button>
+              );
+            }
+            if (value - 3 <= page) {
+              return (
+                <button
+                  type='button'
+                  onClick={() => {
+                    setPage(value + 1);
+                  }}
+                  key={uuidv4()}
+                  className='rounded-xl bg-purple-dark py-4 px-8 font-bold text-white'>
+                  {value + 1}
+                </button>
+              );
+            }
+            if (value + 4 >= page) {
+              return (
+                <button
+                  type='button'
+                  onClick={() => {
+                    setPage(value + 1);
+                  }}
+                  key={uuidv4()}
+                  className='rounded-xl bg-purple-dark py-4 px-8 font-bold text-white'>
+                  {value + 1}
+                </button>
+              );
+            }
+            return null;
+          })}
         </div>
       </section>
     </main>
