@@ -6,6 +6,7 @@ import tasksControllers from '../../api/controllers/tasksControllers';
 const Main = () => {
   const [inboxTask, setInboxTask] = React.useState('');
   const [apiTasks, setApiTasks] = React.useState([]);
+  const [totalTasks, setTotalTasks] = React.useState(0);
   const [updatedTasks, setUpdatedTasks] = React.useState([]);
   const [page, setPage] = React.useState(1);
   const [limitPerPages, setLimitPerPages] = React.useState(10);
@@ -15,7 +16,13 @@ const Main = () => {
   useEffect(() => {
     tasksControllers.getAllTasks(page, limitPerPages).then(({ data, headers }) => {
       setApiTasks(data);
+      setTotalTasks(headers['x-total-count']);
       setFinalPage(headers.link.match(/(?<=page=).*?(?=&)/g).slice(-1));
+      if (headers['x-total-count'] > limitPerPages) {
+        setFinalPage(headers.link.match(/(?<=page=).*?(?=&)/g).slice(-1));
+      } else {
+        setFinalPage(1);
+      }
       window.scrollTo({
         top: 0,
         behavior: 'smooth',
@@ -44,7 +51,7 @@ const Main = () => {
   const handleDeleteTaskById = (id) => {
     tasksControllers.deleteTaskById(id).then((result) => {
       setUpdatedTasks(result);
-      if (apiTasks.length === 1) {
+      if (totalTasks !== 1 && apiTasks.length === 1) {
         setPage(page - 1);
       }
     });
@@ -68,7 +75,9 @@ const Main = () => {
       <section className='mx-auto mt-16 phone-up:w-[76.8rem]'>
         <div className='flex justify-between'>
           <div>
-            <p className='text-blue'>tarefas criadas</p>
+            <p className='text-blue'>
+              tarefas criadas {totalTasks}, finalPage {finalPage}, numberPages {numberPages}
+            </p>
           </div>
           <div>
             <p className='text-purple'>concluidas</p>
