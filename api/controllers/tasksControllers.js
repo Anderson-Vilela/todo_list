@@ -12,6 +12,15 @@ const tasksControllers = {
     }
   },
 
+  async getCompletedTasks() {
+    try {
+      const response = await api().get(`/tasks?isCompleted=true`);
+      return response;
+    } catch (error) {
+      return messageError;
+    }
+  },
+
   async createNewTask(task) {
     try {
       const { data } = await api().post('/tasks', task);

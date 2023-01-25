@@ -8,6 +8,7 @@ const Main = () => {
   const [apiTasks, setApiTasks] = React.useState([]);
   const [totalTasks, setTotalTasks] = React.useState(0);
   const [updatedTasks, setUpdatedTasks] = React.useState([]);
+  const [completedTasks, setCompletedTasks] = React.useState(0);
   const [page, setPage] = React.useState(1);
   const [limitPerPages, setLimitPerPages] = React.useState(10);
   const [finalPage, setFinalPage] = React.useState(1);
@@ -27,6 +28,7 @@ const Main = () => {
         behavior: 'smooth',
       });
     });
+    tasksControllers.getCompletedTasks().then(({ data }) => setCompletedTasks(data.length));
   }, [updatedTasks, page, limitPerPages]);
 
   useEffect(() => {
@@ -72,34 +74,36 @@ const Main = () => {
         </button>
       </form>
       <section className='mx-auto mt-16 phone-up:w-[76.8rem]'>
-        <div className='flex justify-between'>
+        <div className='flex items-center justify-between'>
           <div>
-            <p className='text-blue'>
-              tarefas criadas {totalTasks}, finalPage {finalPage}, numberPages {numberPages}
+            <label htmlFor='limit' className='flex items-center gap-6 text-purple-dark'>
+              Limite de tarefas por página
+              <select
+                className='rounded-lg border border-purple-dark font-bold'
+                name='limit'
+                id='limit'
+                onChange={({ target }) => {
+                  setLimitPerPages(target.value);
+                  setPage(1);
+                }}>
+                <option value='10' defaultValue={10}>
+                  10
+                </option>
+                <option value='5'>5</option>
+                <option value='3'>3</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <p className='flex items-center gap-6 text-blue'>
+              tarefas criadas <span className='rounded-lg border border-blue bg-white px-2 py-1'>{totalTasks}</span>
             </p>
           </div>
           <div>
-            <p className='text-purple'>concluidas</p>
+            <p className='flex items-center gap-6 text-purple'>
+              concluidas <span className='rounded-lg border border-purple bg-white px-2 py-1'>{completedTasks}</span>
+            </p>
           </div>
-        </div>
-        <div className='mt-8'>
-          <label htmlFor='limit' className='flex items-center gap-6 text-purple-dark'>
-            Limite de tarefas por página
-            <select
-              className='rounded-lg font-bold'
-              name='limit'
-              id='limit'
-              onChange={({ target }) => {
-                setLimitPerPages(target.value);
-                setPage(1);
-              }}>
-              <option value='10' defaultValue={10}>
-                10
-              </option>
-              <option value='5'>5</option>
-              <option value='3'>3</option>
-            </select>
-          </label>
         </div>
         <div className={apiTasks.length === 0 ? 'mt-8 rounded-lg border-t border-gray-300' : 'mt-8'}>
           {apiTasks.length === 0 ? (
