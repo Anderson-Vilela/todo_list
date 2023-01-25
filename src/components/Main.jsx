@@ -17,8 +17,7 @@ const Main = () => {
     tasksControllers.getAllTasks(page, limitPerPages).then(({ data, headers }) => {
       setApiTasks(data);
       setTotalTasks(headers['x-total-count']);
-      setFinalPage(headers.link.match(/(?<=page=).*?(?=&)/g).slice(-1));
-      if (headers['x-total-count'] > limitPerPages) {
+      if (headers.link) {
         setFinalPage(headers.link.match(/(?<=page=).*?(?=&)/g).slice(-1));
       } else {
         setFinalPage(1);
