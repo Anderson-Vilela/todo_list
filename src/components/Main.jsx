@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Check, Notepad, PlusCircle, Trash } from 'phosphor-react';
+import { CaretDoubleLeft, CaretDoubleRight, Check, Notepad, PlusCircle, Trash } from 'phosphor-react';
 import { v4 as uuidv4 } from 'uuid';
 import tasksControllers from '../../api/controllers/tasksControllers';
 
@@ -19,7 +19,7 @@ const Main = () => {
       setApiTasks(data);
       setTotalTasks(headers['x-total-count']);
       if (headers.link) {
-        setFinalPage(headers.link.match(/(?<=page=).*?(?=&)/g).slice(-1));
+        setFinalPage(parseInt(headers.link.match(/(?<=page=).*?(?=&)/g).slice(-1), 10));
       } else {
         setFinalPage(1);
       }
@@ -32,8 +32,7 @@ const Main = () => {
   }, [updatedTasks, page, limitPerPages]);
 
   useEffect(() => {
-    const number = parseInt(finalPage, 10);
-    setNumberPages([...Array(number).keys()]);
+    setNumberPages([...Array(finalPage).keys()]);
   }, [finalPage]);
 
   const handleChange = ({ target }) => setInboxTask(target.value);
@@ -140,6 +139,9 @@ const Main = () => {
       </section>
       <section className='mx-auto pt-8 pb-32 phone-up:w-[76.8rem] '>
         <div className='flex items-center justify-center gap-3'>
+          <button type='button' onClick={() => setPage(1)}>
+            <CaretDoubleLeft size={38} color='#8284FA' weight='bold' />
+          </button>
           {numberPages.map((value) => {
             if (value + 1 === page) {
               return (
@@ -169,6 +171,9 @@ const Main = () => {
             }
             return null;
           })}
+          <button type='button' onClick={() => setPage(finalPage)}>
+            <CaretDoubleRight size={38} color='#8284FA' weight='bold' />
+          </button>
         </div>
       </section>
     </main>
